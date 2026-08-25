@@ -25,7 +25,6 @@ use eframe::egui::{
     TextureOptions, ThemePreference, Ui, UiBuilder, Vec2, Visuals, Window,
 };
 
-use crate::{DEFAULT_PORT, lang::LANGS};
 use crate::{
     AudioSettings, DefaultSettings, GameSettings, ImageMap, NetManStopOnDrop, PlayerAppearance,
     bookkeeping::{
@@ -53,6 +52,7 @@ use crate::{
     steam_helper,
     util::steam_helper::LobbyExtraData,
 };
+use crate::{DEFAULT_PORT, lang::LANGS};
 
 enum AppState {
     Connect,
