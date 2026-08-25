@@ -10,7 +10,7 @@ use crate::{
     lobby_code::{LobbyCode, LobbyKind},
     mod_manager,
     net::{NetManager, NetManagerInit, NetManagerPaths, omni::PeerVariant, steam_networking},
-    paths,
+    parse_connect_addr, paths,
     player_cosmetics::PlayerPngDesc,
     steam_helper,
     util::steam_helper::LobbyExtraData,
@@ -167,7 +167,7 @@ fn cli_setup(
 pub fn connect_cli(lobby: String, args: Args) {
     let (state, netmaninit, kind, audio, _, _) = cli_setup(args);
     let variant = if lobby.contains(':') {
-        let p = Peer::connect(lobby.parse().unwrap(), None).unwrap();
+        let p = Peer::connect(parse_connect_addr(&lobby).unwrap(), None).unwrap();
         while p.my_id().is_none() {
             sleep(Duration::from_millis(100))
         }

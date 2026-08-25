@@ -1,7 +1,6 @@
 use std::{
     fmt::Display,
     fs, mem,
-    net::IpAddr,
     net::SocketAddr,
     path::PathBuf,
     process::exit,
@@ -47,6 +46,7 @@ use crate::{
         omni::{OmniPeerId, PeerVariant},
         steam_networking,
     },
+    parse_connect_addr,
     paths::{self, Paths},
     player_cosmetics::{PlayerPngDesc, display_player_skin},
     steam_helper,
@@ -784,19 +784,15 @@ impl App {
         }
 
         ui.text_edit_singleline(&mut self.app_saved_state.addr);
-        let addr = self.app_saved_state.addr.parse();
-
-        let ip: Result<IpAddr, _> = self.app_saved_state.addr.parse();
-        let addr2 = ip.map(|ip| SocketAddr::new(ip, DEFAULT_PORT));
-
-        let addr = addr.or(addr2);
-
-        ui.add_enabled_ui(addr.is_ok(), |ui| {
-            if ui.button(tr("ip_connect")).clicked()
-                && let Ok(addr) = addr
-            {
-                self.set_settings();
-                self.start_connect(addr);
+        ui.add_enabled_ui(!self.app_saved_state.addr.trim().is_empty(), |ui| {
+            if ui.button(tr("ip_connect")).clicked() {
+                match parse_connect_addr(&self.app_saved_state.addr) {
+                    Ok(addr) => {
+                        self.set_settings();
+                        self.start_connect(addr);
+                    }
+                    Err(err) => self.notify_error(err),
+                }
             }
         });
     }
