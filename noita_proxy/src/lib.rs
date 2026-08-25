@@ -1,4 +1,5 @@
 use std::{
+    net::{IpAddr, SocketAddr, ToSocketAddrs},
     ops::Deref,
     sync::{Arc, atomic::Ordering},
     thread::JoinHandle,
@@ -32,6 +33,28 @@ mod player_settings;
 mod cli;
 
 const DEFAULT_PORT: u16 = 5123;
+
+pub(crate) fn parse_connect_addr(raw: &str) -> eyre::Result<SocketAddr> {
+    let addr = raw.trim();
+
+    if let Ok(addr) = addr.parse::<SocketAddr>() {
+        return Ok(addr);
+    }
+
+    if let Ok(ip) = addr.parse::<IpAddr>() {
+        return Ok(SocketAddr::new(ip, DEFAULT_PORT));
+    }
+
+    let mut addrs = if addr.contains(':') {
+        addr.to_socket_addrs()?
+    } else {
+        (addr, DEFAULT_PORT).to_socket_addrs()?
+    };
+
+    addrs
+        .next()
+        .ok_or_else(|| eyre::eyre!("could not resolve address: {addr}"))
+}
 
 pub struct NetManStopOnDrop(pub Arc<net::NetManager>, Option<JoinHandle<()>>);
 
