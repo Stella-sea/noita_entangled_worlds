@@ -25,6 +25,7 @@ use eframe::egui::{
     TextureOptions, ThemePreference, Ui, UiBuilder, Vec2, Visuals, Window,
 };
 
+use crate::lang::LANGS;
 use crate::{
     AudioSettings, DefaultSettings, GameSettings, ImageMap, NetManStopOnDrop, PlayerAppearance,
     bookkeeping::{
@@ -46,13 +47,12 @@ use crate::{
         omni::{OmniPeerId, PeerVariant},
         steam_networking,
     },
+    parse_connect_addr,
     paths::{self, Paths},
     player_cosmetics::{PlayerPngDesc, display_player_skin},
-    parse_connect_addr,
     steam_helper,
     util::steam_helper::LobbyExtraData,
 };
-use crate::lang::LANGS;
 
 enum AppState {
     Connect,

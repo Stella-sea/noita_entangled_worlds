@@ -10,9 +10,9 @@ use crate::{
     lobby_code::{LobbyCode, LobbyKind},
     mod_manager,
     net::{NetManager, NetManagerInit, NetManagerPaths, omni::PeerVariant, steam_networking},
+    parse_connect_addr,
     paths,
     player_cosmetics::PlayerPngDesc,
-    parse_connect_addr,
     steam_helper,
     util::steam_helper::LobbyExtraData,
 };
