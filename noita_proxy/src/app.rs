@@ -52,7 +52,7 @@ use crate::{
     steam_helper,
     util::steam_helper::LobbyExtraData,
 };
-use crate::{DEFAULT_PORT, lang::LANGS};
+use crate::lang::LANGS;
 
 enum AppState {
     Connect,
