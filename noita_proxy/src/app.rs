@@ -25,7 +25,7 @@ use eframe::egui::{
     TextureOptions, ThemePreference, Ui, UiBuilder, Vec2, Visuals, Window,
 };
 
-use crate::lang::LANGS;
+use crate::{DEFAULT_PORT, lang::LANGS};
 use crate::{
     AudioSettings, DefaultSettings, GameSettings, ImageMap, NetManStopOnDrop, PlayerAppearance,
     bookkeeping::{
