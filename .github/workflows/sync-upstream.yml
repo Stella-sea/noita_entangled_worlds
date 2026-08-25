@@ -1,0 +1,56 @@
+name: Sync upstream
+
+on:
+  schedule:
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Merge upstream and tag build
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Merge upstream
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          branch="${GITHUB_REF_NAME:-master}"
+          git remote add upstream https://github.com/IntQuant/noita_entangled_worlds.git
+          git fetch upstream
+          git checkout "$branch"
+
+          before="$(git rev-parse HEAD)"
+          if ! git merge --no-edit "upstream/$branch"; then
+            echo "Upstream merge has conflicts:"
+            git diff --name-only --diff-filter=U
+            exit 1
+          fi
+
+          after="$(git rev-parse HEAD)"
+          if [ "$before" = "$after" ]; then
+            echo "Already up to date with upstream/$branch."
+            exit 0
+          fi
+
+          git push origin "$branch"
+
+          version="$(grep -m1 '^version = ' noita_proxy/Cargo.toml | sed -E 's/version = "([^"]+)"/\1/')"
+          timestamp="$(date -u +%Y%m%d%H%M%S)"
+          tag="v${version}-domain-fix-${timestamp}"
+
+          git tag "$tag"
+          git push origin "$tag"
+          echo "Pushed $branch and tag $tag."
